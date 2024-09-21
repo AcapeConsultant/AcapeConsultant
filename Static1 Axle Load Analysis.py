@@ -16,10 +16,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns # For data visualization
 
 #NAMING THE WEIGHBRIDGE
-WeighbridgeName = pd.read_csv('C:/Users/ACAPE CONSULTANT/Desktop/Rbased/Static1/WeighbridgeName.csv')
+WeighbridgeName = pd.read_csv('WeighbridgeName.csv')
 WeighbridgeName
 
-Q3 = pd.ExcelFile('C:/Users/ACAPE CONSULTANT/Desktop/Pythonbased/Static1/Q3.xlsx')
+Q3 = pd.ExcelFile('Q3.xlsx')
 
 Q3 = Q3.parse(0)
 
@@ -545,7 +545,7 @@ Q3.sort_values(['GO'], ascending=False, inplace=True)
 Q3_GO = round(pd.DataFrame(Q3[Q3.GO>0]), 1)
 Q3_GCOMP = round(pd.DataFrame(Q3[Q3.GO<=0]), 1)
 
-#Returning Non-Overloading to zeros
+#Returning Non-Overloading
 GCOMP = Q3['GO']<=0
 Q3.loc[GCOMP, 'GO']=0
 
