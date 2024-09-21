@@ -1,0 +1,248 @@
+---
+title: "PROJECT TITLE: A STUDY ON THE IMPACTS OF BUG WEED ON GROWTH OF Cupressus lusitanica IN SELECTED PELIS FARMS OF KERICHO FOREST"
+author: "DATA ANALYST: DIR. PETER KIPROTICH NGETICH, ACAPE IMPACT CONSULTANT LTD"
+date: "DATE OF ANALYSIS: 8TH MAY, 2021"
+output: html_document
+---
+Homogeneity of variance is an assumption underlying both t tests and F tests (analyses of variance, ANOVAs) in which the population variances (i.e., the distribution, or “spread,” of scores around the mean) of two or more samples are considered equal. In correlations and regressions, the term “homogeneity of variance in arrays,” also called “homoskedasticity,” refers to the assumption that, within the population, the variance of Y for each value of X is constant. This entry focuses on homogeneity of variance as it relates to t tests and ANOVAs.
+
+*load required libraries*
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(haven)
+library(tidyverse)
+library(lmtest)
+library(apaTables)
+library(kableExtra)
+library(rmarkdown)
+library(knitr)
+library(stats)
+```
+
+**Data importation into r from SPSS**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+GEORGE_ANALYSIS <- read_sav("C:/Users/ACAPE CONSULTANT/Desktop/ALL/PROJECTS/George Project/GEORGE ANALYSIS.sav")
+
+GEORGE_ANALYSIS$GROUP <- factor(GEORGE_ANALYSIS$GROUP, labels=c("Control", "Treatment"))
+
+GEORGE_ANALYSIS$PLOT <- factor(GEORGE_ANALYSIS$PLOT, labels=c("Plot 1", "Plot 2", "Plot 3"))
+
+  kable(GEORGE_ANALYSIS) %>%
+  kable_styling(GEORGE_ANALYSIS, bootstrap_options = "striped", position = "left", font_size = 12)
+```
+
+**To determine the effects of Bug weed on growth in height of Cuppressus lusitanica saplings**
+*Stripchart of Change in Height across the two groups*
+
+#Based on Group
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+stripchart(HGTCHANGE ~ as.factor(GROUP), vertical =T, pch=19, data=GEORGE_ANALYSIS, xlab="Group Type", ylab="Change in Height", col="red", method="jitter", jitter=0.04)
+```
+
+#Based on Plot
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+stripchart(HGTCHANGE ~ as.factor(PLOT), vertical=T, pch=19, data=GEORGE_ANALYSIS, xlab="Plot", ylab="Change in Height", col="blue", method="jitter", jitter=0.04)
+```
+
+*Boxplots in Height*
+
+#Based on Group
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+boxplot(HGTCHANGE~GROUP, data=GEORGE_ANALYSIS)
+```
+
+#Based on Plot
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+boxplot(HGTCHANGE~PLOT, data=GEORGE_ANALYSIS)
+```
+
+*The Assumption of Homogeneity of Variance*
+
+The assumption of homogeneity of variance is an assumption of the independent samples t-test and ANOVA stating that all comparison groups have the same variance.  The independent samples t-test and ANOVA utilize the t and F statistics respectively, which are generally robust to violations of the assumption as long as group sizes are equal.  Equal group sizes may be defined by the ratio of the largest to smallest group being less than 1.5.  If group sizes are vastly unequal and homogeneity of variance is violated, then the F statistic will be biased when large sample variances are associated with small group sizes.  When this occurs, the significance level will be underestimated, which can cause the null hypothesis to be falsely rejected.  On the other hand, the F statistic will be biased in the opposite direction if large variances are associated with large group sizes.  This would mean that the significance level will be overestimated.  This does not cause the same problems as falsely rejecting the null hypothesis, however, it can cause a decrease in the power of the test.
+To test for homogeneity of variance, there are several statistical tests that can be used.  These tests include: Hartley’s Fmax, Cochran’s, Levene’s and Barlett’s test.  Several of these assessments have been found to be too sensitive to non-normality and are not frequently used.  Of these tests, the most common assessment for homogeneity of variance is Levene’s test.  The Levene’s test uses an F-test to test the null hypothesis that the variance is equal across groups.  A p value less than .05 indicates a violation of the assumption.  If a violation occurs, it is likely that conducting the non-parametric equivalent of the analysis is more appropriate.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+bartlett.test(HGTCHANGE~GROUP, data=GEORGE_ANALYSIS)
+```
+
+Significance is greater than 0.05 (p=0.3893), Bartlett’s Test is non-significant so equal variance is assumed.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+bartlett.test(HGTCHANGE~PLOT, data=GEORGE_ANALYSIS)
+```
+
+Significance is less than 0.05 (p=0.02025), Bartlett’s Test is significant so equal variance is rejected.
+
+*Linear Model of Change in Height*
+
+#Based on Group
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+Mod1 <- lm(HGTCHANGE ~ as.factor(GROUP), data=GEORGE_ANALYSIS)
+Mod1
+par(mfrow = c(2, 2))
+plot(Mod1)
+par(mfrow = c(1, 1))
+```
+
+#Based on Plot
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+Mod2 <- lm(HGTCHANGE ~ as.factor(PLOT), data=GEORGE_ANALYSIS)
+Mod2
+par(mfrow = c(2, 2))
+plot(Mod2)
+par(mfrow = c(1, 1))
+```
+
+*Standardized residuals Histogram plot*
+
+#Based on Group
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+sresid1 <- rstandard(Mod1)
+hist(sresid1, main="Histogram of Standardized residuals", xlab="Standardized Residuals", col="red")
+```
+
+#Based on Plot
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+sresid2 <- rstandard(Mod2)
+hist(sresid2, main="Histogram of Standardized residuals", xlab="Standardized Residuals")
+```
+
+*Analysis of Variance on the Model*
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+anova(Mod1)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+anova(Mod2)
+```
+
+*Turkey's Test on the Model*
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+TukeyHSD(aov(Mod1))
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+TukeyHSD(aov(Mod2))
+```
+
+Comment 1: The effects of the Bug weed (Solanum mauritianum scopoli) on the growth in heights of the Cupressus lusitanica saplings for the control and treated units was significant as shown (P=0.002) at 95% level of significant
+
+**To determine the effects of Bug weed on growth in diameter of Cuppressus lusitanica saplings**
+*Stripchart of Change in Diameter across the two groups*
+
+#Based on Group
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+stripchart(DBHCHANGE ~ as.factor(GROUP), vertical=T, pch=19, data=GEORGE_ANALYSIS, xlab="Group Type", ylab="Change in Diameter", method="jitter", jitter=0.04)
+```
+
+#Based on Plot
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+stripchart(DBHCHANGE ~ as.factor(PLOT), vertical=T, pch=19, data=GEORGE_ANALYSIS, xlab="Plot", ylab="Change in Diameter", col="blue", method="jitter", jitter=0.04)
+```
+
+*Boxplots in Diameter*
+
+#Based on Group
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+boxplot(DBHCHANGE~GROUP, data=GEORGE_ANALYSIS)
+```
+
+#Based on Plot
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+boxplot(DBHCHANGE~PLOT, data=GEORGE_ANALYSIS)
+```
+
+*The Assumption of Homogeneity of Variance*
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+bartlett.test(DBHCHANGE~GROUP, data=GEORGE_ANALYSIS)
+```
+
+Significance is greater than 0.05 (p=0.1866), Bartlett’s Test is non-significant so equal variance is assumed.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+bartlett.test(DBHCHANGE~PLOT, data=GEORGE_ANALYSIS)
+```
+
+Significance is greater than 0.05 (p=0.2512), Bartlett’s Test is non-significant so equal variance is assumed.
+
+*Linear Model of Change in Diameter*
+
+#Based on Group
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+Mod3 <- lm(DBHCHANGE ~ as.factor(GROUP), data=GEORGE_ANALYSIS)
+Mod3
+par(mfrow = c(2, 2))
+plot(Mod3)
+par(mfrow = c(1, 1))
+```
+
+#Based on Plot
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+Mod4 <- lm(DBHCHANGE ~ as.factor(PLOT), data=GEORGE_ANALYSIS)
+Mod4
+par(mfrow = c(2, 2))
+plot(Mod4)
+par(mfrow = c(1, 1))
+```
+
+*Standardized residuals Histogram plot*
+
+#Based on Group
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+sresid3 <- rstandard(Mod3)
+hist(sresid3, main="Histogram of Standardized residuals", xlab="Standardized Residuals", col="blue")
+```
+
+#Based on Plot
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+sresid4 <- rstandard(Mod4)
+hist(sresid4, main="Histogram of Standardized residuals", xlab="Standardized Residuals")
+```
+
+*Analysis of Variance on the Model*
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+anova(Mod3)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+anova(Mod4)
+```
+
+*Turkey's Test on the Model*
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+TukeyHSD(aov(Mod3))
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+TukeyHSD(aov(Mod4))
+```
+
+Comment 2: The effects of bug weed (Solanum mauritianum scopoli) on the growth in diameter of Cupressus lusitanica was not significant (P=0.403). Generally, for the 8 weeks period of experimentation the bug weed had no significant on the growth of the saplings
+
+```{r, echo=FALSE}
+include_graphics("C:/Users/ACAPE CONSULTANT/Desktop/SCAN/FIVERR/Acape_Gig1.png")
+```
+
+**END OF EFFECTS OF BUG WEED ON HEIGHT AND DIAMETER OF Cupressus lusitanica IN SELECTED PELIS FARMS OF KERICHO FOREST: DATA ANALYSIS MARKING SUCCESS**
