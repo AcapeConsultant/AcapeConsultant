@@ -1,14 +1,13 @@
 from IPython.display import Image
 Image("C:/Users/ACAPE CONSULTANT/Desktop/Pythonbased/AcapeLogo.jpg")
 
-# STATIC1 AXLE LOAD MONITORING DATA ANALYSIS FOR KENYA ROADS BOARD
-# DESIGNED BY: DIR. PETER KIPROTICH NGETICH,
+# AXLE LOAD MONITORING DATA ANALYSIS FOR ROADS
+# DESIGNED BY: DIR. NGETICH,
 # ACAPE IMPACT CONSULTANT LIMITED
-# P.O. Box 2149-20200,Kabianga Road, Kericho ¦Tel: +254 725 946 923
+
 # Web : http://m.facebook.com/acapeimpact ¦E-Mail:acapeimpact@gmail.com
 #  (Up and Running with Python)
-# DATA IMPORTATION PROCESSES:- (Use Rstudio and make sure your data imported as Q3 (excel, text (csv), stata, SPSS, SAS and dbms are supported)
-
+# DATA IMPORTATION PROCESSES:- (Use Rstudio and make sure your data imported)
 #IMPORT REQUIRED MODULES/LIBRARIES
 
 import numpy as np
@@ -16,11 +15,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns # For data visualization
 
-#NAMING THE STATIC WEIGHBRIDGE
+#NAMING THE WEIGHBRIDGE
 WeighbridgeName = pd.read_csv('C:/Users/ACAPE CONSULTANT/Desktop/Rbased/Static1/WeighbridgeName.csv')
 WeighbridgeName
-
-# READ YOUR STATIC RAW EXCEL DATA NAMED Q3 ON COMPUTER DESKTOP UNDER Rbased FOLDER IN Static FOLDER.
 
 Q3 = pd.ExcelFile('C:/Users/ACAPE CONSULTANT/Desktop/Pythonbased/Static1/Q3.xlsx')
 
@@ -48,7 +45,7 @@ Q3['Transporter'].fillna(0, inplace=True)
 Q3.head()
 
 # DATA CLEANING PROCESSES:-
-# Ensure all Variables headings merge: Station, PlateNo, Configuration, VehicleType, Origin, Destination, Transporter, Speed, GA1, GA2 and GA4
+
 DATADEL1 = Q3[Q3.GA1 <=0] # Omitted data for GA1<=0
 DATADEL2 = Q3[Q3.GA2 <=0] # Omitted data for GA2<=0
 DATADEL3 = Q3[Q3.PlateNo ==0] # Omitted data missing vehicle plate number
@@ -63,7 +60,7 @@ DATADEL.to_excel('C:/Users/ACAPE CONSULTANT/Desktop/Pythonbased/Static1/OMITTED 
 
 # FINE TUNING AND DATA CLEANING
 
-# CONVERTING LOWER CASE OBSERVATION STRING VARIABLES INTO UPPER CASE FOR UNIFORMITY
+# CONVERTING CASE
 Q3.PlateNo = Q3['PlateNo'].str.upper()
 Q3.Configuration = Q3['Configuration'].str.upper()
 Q3.Origin = Q3['Origin'].str.upper()
